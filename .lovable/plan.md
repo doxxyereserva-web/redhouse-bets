@@ -14,7 +14,7 @@ Fluxo em 4 passos, sem senha:
 Detalhes técnicos: a busca de perfil e a leitura da bio acontecem em funções de servidor (a API do Roblox bloqueia chamadas direto do navegador). A conta é criada no Lovable Cloud com um identificador derivado do ID do Roblox, e a sessão fica salva entre visitas.
 
 ### Economia
-- Saldo em **RC (RedHouse Coins)**, fictício.
+- Saldo exibido em **Robux (R$)** com ícone e formatação oficiais, mas 100% demo nesta fase. Painel de controle (modo criador) para editar saldo, simular deposit/withdraw e ajustar sorte e multiplicador dos jogos durante as gravações.
 - Bônus inicial de 1.000 RC, faucet diário e botão de recarga demo.
 - Toda aposta/pagamento é calculada **no servidor**: o cliente nunca decide o resultado nem grava o saldo.
 - Histórico de apostas, estatísticas do jogador, leaderboard e feed de "big wins" ao vivo.
