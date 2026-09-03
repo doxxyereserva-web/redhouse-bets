@@ -8,6 +8,9 @@ import { Robux } from "@/components/Robux";
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
 import { formatMultiplier } from "@/lib/format";
+import markAsset from "@/assets/redhouse-mark.png.asset.json";
+import heroImg from "@/assets/hero.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
