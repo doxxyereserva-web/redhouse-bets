@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { BetControls } from "@/components/games/BetControls";
 import { useWallet } from "@/hooks/useWallet";
 import { formatMultiplier } from "@/lib/format";
+import { plinkoPayouts } from "@/lib/fair";
 
 const ROWS = 12;
+const STEP_MS = 105;
 
 const PAYOUTS: Record<string, number[]> = {
-  low: [5.6, 2.1, 1.6, 1.2, 1.1, 1, 0.5, 1, 1.1, 1.2, 1.6, 2.1, 5.6],
-  medium: [24, 8, 3, 1.4, 1.1, 0.6, 0.3, 0.6, 1.1, 1.4, 3, 8, 24],
-  high: [130, 26, 8, 3, 1.2, 0.4, 0.2, 0.4, 1.2, 3, 8, 26, 130],
+  low: plinkoPayouts(ROWS, 1.35),
+  medium: plinkoPayouts(ROWS, 1.75),
+  high: plinkoPayouts(ROWS, 2.3),
 };
+
+type Ball = { x: number; y: number };
 
 export function Plinko() {
   const { balance, settle, signedIn } = useWallet();
@@ -20,17 +24,37 @@ export function Plinko() {
   const [risk, setRisk] = useState<keyof typeof PAYOUTS>("medium");
   const [dropping, setDropping] = useState(false);
   const [slot, setSlot] = useState<number | null>(null);
+  const [ball, setBall] = useState<Ball | null>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const payouts = PAYOUTS[risk]!;
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   async function drop() {
     if (!signedIn) return toast.error("Sign in with your Roblox account first.");
     if (wager <= 0 || wager > balance) return toast.error("Invalid wager.");
     setDropping(true);
     setSlot(null);
-    let index = 0;
-    for (let i = 0; i < ROWS; i++) index += Math.random() < 0.5 ? 0 : 1;
-    await new Promise((r) => setTimeout(r, 1200));
+
+    // Path: at each row the ball bounces left or right off a peg.
+    const path: number[] = [];
+    let offset = 0;
+    for (let i = 0; i < ROWS; i++) {
+      offset += Math.random() < 0.5 ? -1 : 1;
+      path.push(offset);
+    }
+    const index = (offset + ROWS) / 2;
+
+    setBall({ x: 0, y: 0 });
+    path.forEach((o, i) => {
+      timers.current.push(
+        setTimeout(() => setBall({ x: o, y: i + 1 }), STEP_MS * (i + 1)),
+      );
+    });
+
+    await new Promise((r) => setTimeout(r, STEP_MS * (ROWS + 2)));
+    setBall(null);
     setSlot(index);
     setDropping(false);
     const m = payouts[index] ?? 0;
@@ -38,28 +62,44 @@ export function Plinko() {
     if (m >= 1) toast.success(`Landed ${formatMultiplier(m)}`);
   }
 
+  const cell = 100 / (ROWS + 2);
+
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <div className="panel flex flex-col items-center gap-4 p-6">
-        <div className="flex flex-col items-center gap-1.5 py-2">
-          {Array.from({ length: ROWS }).map((_, r) => (
-            <div key={r} className="flex gap-2.5">
-              {Array.from({ length: r + 2 }).map((_, c) => (
+      <div className="panel flex flex-col items-center gap-4 p-4">
+        <div className="relative aspect-[4/3] w-full max-w-lg overflow-hidden rounded-md bg-[radial-gradient(400px_240px_at_50%_0%,oklch(0.56_0.21_24/0.14),transparent_70%)]">
+          {Array.from({ length: ROWS }).map((_, r) =>
+            Array.from({ length: r + 2 }).map((__, c) => {
+              const left = 50 + (c - (r + 1) / 2) * cell;
+              const top = 6 + ((r + 1) / (ROWS + 1)) * 84;
+              return (
                 <span
-                  key={c}
-                  className={`h-1.5 w-1.5 rounded-full bg-muted-foreground/50 ${dropping ? "animate-pulse" : ""}`}
+                  key={`${r}-${c}`}
+                  className="absolute h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-muted-foreground/60"
+                  style={{ left: `${left}%`, top: `${top}%` }}
                 />
-              ))}
-            </div>
-          ))}
+              );
+            }),
+          )}
+          {ball && (
+            <span
+              className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold shadow-[0_0_12px_oklch(0.82_0.15_85/0.8)]"
+              style={{
+                left: `${50 + (ball.x * cell) / 2}%`,
+                top: `${6 + (ball.y / (ROWS + 1)) * 84}%`,
+                transition: `left ${STEP_MS}ms linear, top ${STEP_MS}ms cubic-bezier(.4,0,.9,.5)`,
+              }}
+            />
+          )}
         </div>
-        <div className="flex w-full flex-wrap justify-center gap-1">
+
+        <div className="flex w-full max-w-lg justify-center gap-1">
           {payouts.map((p, i) => (
             <span
               key={i}
-              className={`num rounded-sm px-2 py-1 text-[10px] font-semibold ${
+              className={`num flex-1 rounded-sm px-1 py-1.5 text-center text-[10px] font-semibold transition-all ${
                 slot === i
-                  ? "bg-gold text-background"
+                  ? "-translate-y-1 bg-gold text-gold-foreground glow-gold"
                   : p >= 2
                     ? "bg-primary/20 text-primary"
                     : "bg-surface-2 text-muted-foreground"
@@ -92,6 +132,9 @@ export function Plinko() {
         <Button className="w-full" onClick={drop} disabled={dropping}>
           Drop ball
         </Button>
+        <p className="text-xs text-muted-foreground">
+          Higher risk means the centre pays under 1x far more often.
+        </p>
       </BetControls>
     </div>
   );

@@ -3,8 +3,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { BetControls } from "@/components/games/BetControls";
 import { useWallet } from "@/hooks/useWallet";
+import { formatMultiplier } from "@/lib/format";
+import { payoutForChance } from "@/lib/fair";
 
 type Side = "red" | "gold";
+
+const PAYOUT = payoutForChance(0.5);
 
 export function Coinflip() {
   const { balance, settle, signedIn, roll } = useWallet();
@@ -12,37 +16,47 @@ export function Coinflip() {
   const [side, setSide] = useState<Side>("red");
   const [flipping, setFlipping] = useState(false);
   const [result, setResult] = useState<Side | null>(null);
+  const [spin, setSpin] = useState(0);
 
   async function flip() {
     if (!signedIn) return toast.error("Sign in with your Roblox account first.");
     if (wager <= 0 || wager > balance) return toast.error("Invalid wager.");
     setFlipping(true);
     setResult(null);
-    const win = roll(0.49);
-    await new Promise((r) => setTimeout(r, 1100));
+    const win = roll(0.5);
     const out: Side = win ? side : side === "red" ? "gold" : "red";
+    setSpin((s) => s + 1800 + (out === "gold" ? 180 : 0));
+    await new Promise((r) => setTimeout(r, 1400));
     setResult(out);
     setFlipping(false);
-    await settle("coinflip", wager, win ? 2 : 0);
-    if (win) toast.success("Heads up — 2.00x");
+    await settle("coinflip", wager, win ? PAYOUT : 0);
+    if (win) toast.success(`Heads up — ${formatMultiplier(PAYOUT)}`);
+    else toast.error("Wrong side.");
   }
+
+  const face = result ?? side;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <div className="panel flex h-[360px] flex-col items-center justify-center gap-6 p-6">
-        <div
-          className={`grid h-32 w-32 place-items-center rounded-full border-4 font-display text-xl font-bold uppercase transition-transform duration-500 ${
-            flipping ? "animate-spin" : ""
-          } ${
-            (result ?? side) === "gold"
-              ? "border-gold/70 bg-gold/15 text-gold"
-              : "border-primary/70 bg-primary/15 text-primary"
-          }`}
-        >
-          {flipping ? "…" : (result ?? side)}
+      <div className="panel flex h-[380px] flex-col items-center justify-center gap-8 p-6">
+        <div className="[perspective:900px]">
+          <div
+            className="relative h-32 w-32 transition-transform duration-[1400ms] ease-out [transform-style:preserve-3d]"
+            style={{ transform: `rotateY(${spin}deg)` }}
+          >
+            <div
+              className={`absolute inset-0 grid place-items-center rounded-full border-4 font-display text-xl font-bold uppercase [backface-visibility:hidden] ${
+                face === "gold"
+                  ? "border-gold/70 bg-gold/15 text-gold glow-gold"
+                  : "border-primary/70 bg-primary/15 text-primary glow-primary"
+              }`}
+            >
+              {face}
+            </div>
+          </div>
         </div>
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {result ? (result === side ? "You won" : "You lost") : "Pick a side"}
+          {flipping ? "Flipping" : result ? (result === side ? "You won" : "You lost") : "Pick a side"}
         </p>
       </div>
 
@@ -62,7 +76,7 @@ export function Coinflip() {
           ))}
         </div>
         <Button className="w-full" onClick={flip} disabled={flipping}>
-          Flip for 2.00x
+          Flip for {formatMultiplier(PAYOUT)}
         </Button>
       </BetControls>
     </div>

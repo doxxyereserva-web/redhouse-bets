@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as MarketsRouteImport } from './routes/markets'
 import { Route as WalletRouteImport } from './routes/wallet'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
@@ -50,6 +56,7 @@ const GamesGameRoute = GamesGameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/leaderboard': typeof LeaderboardRoute
   '/markets': typeof MarketsRoute
   '/wallet': typeof WalletRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/leaderboard': typeof LeaderboardRoute
   '/markets': typeof MarketsRoute
   '/wallet': typeof WalletRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/leaderboard': typeof LeaderboardRoute
   '/markets': typeof MarketsRoute
   '/wallet': typeof WalletRoute
@@ -75,13 +84,27 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/leaderboard' | '/markets' | '/wallet' | '/games/$game'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/leaderboard'
+    | '/markets'
+    | '/wallet'
+    | '/games/$game'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/leaderboard' | '/markets' | '/wallet' | '/games/$game'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/leaderboard'
+    | '/markets'
+    | '/wallet'
+    | '/games/$game'
   id:
     | '__root__'
     | '/'
     | '/auth'
+    | '/dashboard'
     | '/leaderboard'
     | '/markets'
     | '/wallet'
@@ -91,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  DashboardRoute: typeof DashboardRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MarketsRoute: typeof MarketsRoute
   WalletRoute: typeof WalletRoute
@@ -111,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -147,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  DashboardRoute: DashboardRoute,
   LeaderboardRoute: LeaderboardRoute,
   MarketsRoute: MarketsRoute,
   WalletRoute: WalletRoute,

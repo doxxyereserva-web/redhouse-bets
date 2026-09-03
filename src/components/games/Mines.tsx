@@ -7,13 +7,14 @@ import { Slider } from "@/components/ui/slider";
 import { BetControls } from "@/components/games/BetControls";
 import { useWallet } from "@/hooks/useWallet";
 import { formatMultiplier } from "@/lib/format";
+import { edged } from "@/lib/fair";
 
 const TILES = 25;
 
 function multiplierFor(bombs: number, picks: number) {
   let m = 1;
   for (let i = 0; i < picks; i++) m *= (TILES - i) / (TILES - bombs - i);
-  return Number((m * 0.97).toFixed(2));
+  return edged(m);
 }
 
 export function Mines() {
