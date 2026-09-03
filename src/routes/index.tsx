@@ -103,10 +103,22 @@ function Lobby() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-16">
-      <section className="relative mt-8 overflow-hidden rounded-2xl border border-border bg-[linear-gradient(135deg,oklch(0.24_0.06_24),oklch(0.16_0.02_20))] px-6 py-12 md:px-12 md:py-16">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary">
-          Demo house · 18+
-        </p>
+      <section className="relative mt-8 overflow-hidden rounded-2xl border border-border px-6 py-12 md:px-12 md:py-16">
+        <img
+          src={heroImg}
+          alt="RedHouse casino floor key art"
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,oklch(0.14_0.02_20/0.95),oklch(0.14_0.02_20/0.55))]" />
+        <div className="relative">
+        <div className="flex items-center gap-3">
+          <span className="grid h-12 w-12 place-items-center rounded-lg bg-foreground/95 p-1.5">
+            <img src={markAsset.url} alt="RedHouse logo" className="h-full w-full object-contain" />
+          </span>
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary">
+            Demo house · 18+
+          </p>
+        </div>
         <h1 className="mt-4 max-w-2xl text-4xl font-bold uppercase leading-[1.05] md:text-6xl">
           The house where <span className="text-gold">Robux</span> moves fast
         </h1>
@@ -114,6 +126,7 @@ function Lobby() {
           Nine games, a live bet feed and a leveraged market desk. Verify your Roblox profile in 30
           seconds and start playing with demo Robux.
         </p>
+
         <div className="mt-8 flex flex-wrap gap-3">
           {signedIn ? (
             <Link to="/games/$game" params={{ game: "crash" }}>
