@@ -14,13 +14,181 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bets: {
+        Row: {
+          created_at: string
+          game: string
+          id: string
+          multiplier: number
+          payout: number
+          user_id: string
+          wager: number
+          won: boolean
+        }
+        Insert: {
+          created_at?: string
+          game: string
+          id?: string
+          multiplier?: number
+          payout?: number
+          user_id: string
+          wager: number
+          won?: boolean
+        }
+        Update: {
+          created_at?: string
+          game?: string
+          id?: string
+          multiplier?: number
+          payout?: number
+          user_id?: string
+          wager?: number
+          won?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_positions: {
+        Row: {
+          closed_at: string | null
+          entry_price: number
+          exit_price: number | null
+          id: string
+          leverage: number
+          margin: number
+          opened_at: string
+          pnl: number | null
+          side: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          entry_price: number
+          exit_price?: number | null
+          id?: string
+          leverage: number
+          margin: number
+          opened_at?: string
+          pnl?: number | null
+          side: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          entry_price?: number
+          exit_price?: number | null
+          id?: string
+          leverage?: number
+          margin?: number
+          opened_at?: string
+          pnl?: number | null
+          side?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_positions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          balance: number
+          created_at: string
+          display_name: string
+          id: string
+          luck: number
+          multiplier_boost: number
+          profit: number
+          roblox_id: number
+          username: string
+          wagered: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          balance?: number
+          created_at?: string
+          display_name: string
+          id: string
+          luck?: number
+          multiplier_boost?: number
+          profit?: number
+          roblox_id: number
+          username: string
+          wagered?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          balance?: number
+          created_at?: string
+          display_name?: string
+          id?: string
+          luck?: number
+          multiplier_boost?: number
+          profit?: number
+          roblox_id?: number
+          username?: string
+          wagered?: number
+        }
+        Relationships: []
+      }
+      roblox_verifications: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          roblox_id: number
+          username: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          roblox_id: number
+          username: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          roblox_id?: number
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      apply_bet: {
+        Args: {
+          _game: string
+          _multiplier: number
+          _payout: number
+          _wager: number
+        }
+        Returns: number
+      }
+      set_demo_balance: { Args: { _amount: number }; Returns: number }
     }
     Enums: {
       [_ in never]: never
