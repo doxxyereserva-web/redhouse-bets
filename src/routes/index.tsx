@@ -164,31 +164,21 @@ function Lobby() {
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="grid gap-4 sm:grid-cols-2">
-          {GAMES.slice(0, 4).map((game) => (
-            <Link
-              key={game.id}
-              to="/games/$game"
-              params={{ game: game.id }}
-              className="panel group relative overflow-hidden p-5 transition-transform hover:-translate-y-1"
-            >
-              <div
-                className={`absolute -right-10 -top-10 h-28 w-28 rounded-full blur-2xl transition-opacity group-hover:opacity-90 ${
-                  game.accent === "gold"
-                    ? "bg-gold/25"
-                    : game.accent === "win"
-                      ? "bg-win/20"
-                      : "bg-primary/25"
-                }`}
-              />
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Trending
-              </span>
-              <h3 className="mt-3 font-display text-2xl font-bold uppercase">{game.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{game.tagline}</p>
-            </Link>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            { label: "Games live", value: String(GAMES.length), tone: "text-foreground" },
+            { label: "Max multiplier", value: "2500x", tone: "text-gold" },
+            { label: "Payout speed", value: "Instant", tone: "text-win" },
+          ].map((stat) => (
+            <div key={stat.label} className="panel p-5">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+              <p className={`mt-2 font-display text-3xl font-bold uppercase ${stat.tone}`}>
+                {stat.value}
+              </p>
+            </div>
           ))}
         </div>
+
 
         <aside className="space-y-4">
           {profile && (
