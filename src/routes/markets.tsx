@@ -106,8 +106,14 @@ function MarketsPage() {
   }
 
   async function open(side: "long" | "short") {
-    if (!signedIn || !profile) return toast.error(t("Sign in with your Roblox account first."));
-    if (margin <= 0 || margin > balance) return toast.error(t("Invalid margin."));
+    if (!signedIn || !profile) {
+      toast.error(t("Sign in with your Roblox account first."));
+      return;
+    }
+    if (margin <= 0 || margin > balance) {
+      toast.error(t("Invalid margin."));
+      return;
+    }
     const lev = leverage[0]!;
     const res = await settle("markets", margin, 0);
     if (!res) return;
@@ -122,7 +128,10 @@ function MarketsPage() {
       })
       .select("id, side, margin, leverage, entry_price, status")
       .single();
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setPositions((prev) => [data as Position, ...prev]);
     toast.success(`${side === "long" ? t("Long") : t("Short")} ${lev}x @ ${price.toFixed(2)}`);
   }

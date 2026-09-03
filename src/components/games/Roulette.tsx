@@ -34,8 +34,14 @@ export function Roulette() {
   const strip = Array.from({ length: WHEEL.length * REPEATS }, (_, i) => WHEEL[i % WHEEL.length]!);
 
   async function spin() {
-    if (!signedIn) return toast.error("Sign in with your Roblox account first.");
-    if (wager <= 0 || wager > balance) return toast.error("Invalid wager.");
+    if (!signedIn) {
+      toast.error("Sign in with your Roblox account first.");
+      return;
+    }
+    if (wager <= 0 || wager > balance) {
+      toast.error("Invalid wager.");
+      return;
+    }
     setSpinning(true);
     setLanded(null);
 

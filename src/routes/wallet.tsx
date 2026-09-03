@@ -38,11 +38,20 @@ function WalletPage() {
   async function move(direction: 1 | -1) {
     if (!profile) return;
     const value = Number(amount);
-    if (!Number.isFinite(value) || value <= 0) return toast.error(t("Invalid amount."));
+    if (!Number.isFinite(value) || value <= 0) {
+      toast.error(t("Invalid amount."));
+      return;
+    }
     const next = Number(profile.balance) + direction * value;
-    if (next < 0) return toast.error(t("Not enough Robux."));
+    if (next < 0) {
+      toast.error(t("Not enough Robux."));
+      return;
+    }
     const { error } = await supabase.rpc("set_demo_balance", { _amount: next });
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh();
     toast.success(direction === 1 ? t("Deposit simulated.") : t("Withdrawal simulated."));
   }
@@ -52,7 +61,10 @@ function WalletPage() {
     const { error } = await supabase.rpc("set_demo_balance", {
       _amount: Number(profile.balance) + 500,
     });
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     refresh();
     toast.success(t("Faucet claimed: +500 Robux."));
   }

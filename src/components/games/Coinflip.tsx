@@ -19,8 +19,14 @@ export function Coinflip() {
   const [spin, setSpin] = useState(0);
 
   async function flip() {
-    if (!signedIn) return toast.error("Sign in with your Roblox account first.");
-    if (wager <= 0 || wager > balance) return toast.error("Invalid wager.");
+    if (!signedIn) {
+      toast.error("Sign in with your Roblox account first.");
+      return;
+    }
+    if (wager <= 0 || wager > balance) {
+      toast.error("Invalid wager.");
+      return;
+    }
     setFlipping(true);
     setResult(null);
     const win = roll(0.5);
