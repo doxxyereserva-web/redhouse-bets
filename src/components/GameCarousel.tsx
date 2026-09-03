@@ -16,6 +16,27 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { GAMES, type GameId } from "@/lib/games";
 import { Button } from "@/components/ui/button";
+import crashArt from "@/assets/games/crash.jpg";
+import minesArt from "@/assets/games/mines.jpg";
+import rouletteArt from "@/assets/games/roulette.jpg";
+import coinflipArt from "@/assets/games/coinflip.jpg";
+import towersArt from "@/assets/games/towers.jpg";
+import plinkoArt from "@/assets/games/plinko.jpg";
+import blackoutArt from "@/assets/games/blackout.jpg";
+import heistArt from "@/assets/games/heist.jpg";
+import ladderArt from "@/assets/games/ladder.jpg";
+
+export const GAME_ART: Record<GameId, string> = {
+  crash: crashArt,
+  mines: minesArt,
+  roulette: rouletteArt,
+  coinflip: coinflipArt,
+  towers: towersArt,
+  plinko: plinkoArt,
+  blackout: blackoutArt,
+  heist: heistArt,
+  ladder: ladderArt,
+};
 
 const ICONS: Record<GameId, LucideIcon> = {
   crash: Rocket,
@@ -89,15 +110,24 @@ export function GameCarousel() {
                 key={game.id}
                 to="/games/$game"
                 params={{ game: game.id }}
-                className={`panel group relative w-[248px] shrink-0 snap-start overflow-hidden p-5 transition-all duration-300 hover:-translate-y-1.5 ${accent.ring}`}
+                className={`panel group relative w-[268px] shrink-0 snap-start overflow-hidden p-5 transition-all duration-300 hover:-translate-y-1.5 ${accent.ring}`}
               >
+                <img
+                  src={GAME_ART[game.id]}
+                  alt={`${game.name} artwork`}
+                  loading="lazy"
+                  width={768}
+                  height={512}
+                  className="absolute inset-x-0 top-0 h-[150px] w-full object-cover opacity-80 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-1 via-surface-1/85 to-transparent" />
                 <div
-                  className={`absolute -right-12 -top-12 h-36 w-36 rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-100 ${accent.glow} opacity-70`}
+                  className={`absolute -right-12 -top-12 h-36 w-36 rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-100 ${accent.glow} opacity-60`}
                 />
                 <div
                   className={`absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t ${accent.art} to-transparent opacity-60`}
                 />
-                <div className="relative flex h-[190px] flex-col">
+                <div className="relative flex h-[240px] flex-col">
                   <div className="flex items-start justify-between">
                     <span
                       className={`grid h-11 w-11 place-items-center rounded-lg border border-border bg-surface-2/80 ${accent.text} transition-transform duration-300 group-hover:scale-110`}
