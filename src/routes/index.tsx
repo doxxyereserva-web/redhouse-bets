@@ -151,7 +151,9 @@ function Lobby() {
             <Zap className="h-4 w-4 text-gold" /> Instant demo payouts
           </span>
         </div>
+        </div>
       </section>
+
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div>
