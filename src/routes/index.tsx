@@ -10,6 +10,8 @@ import { useProfile } from "@/hooks/useProfile";
 import { formatMultiplier } from "@/lib/format";
 import markAsset from "@/assets/redhouse-mark.png.asset.json";
 import heroImg from "@/assets/hero.jpg";
+import { GameCarousel } from "@/components/GameCarousel";
+
 
 
 export const Route = createFileRoute("/")({
