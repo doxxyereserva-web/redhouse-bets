@@ -30,8 +30,14 @@ export function Mines() {
   const current = opened.length ? multiplierFor(bombCount, opened.length) : 1;
 
   function start() {
-    if (!signedIn) return toast.error("Sign in with your Roblox account first.");
-    if (wager <= 0 || wager > balance) return toast.error("Invalid wager.");
+    if (!signedIn) {
+      toast.error("Sign in with your Roblox account first.");
+      return;
+    }
+    if (wager <= 0 || wager > balance) {
+      toast.error("Invalid wager.");
+      return;
+    }
     const next = Array.from({ length: TILES }, () => false);
     let placed = 0;
     while (placed < bombCount) {

@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Settings2, LogOut, TrendingUp, Trophy, Dices } from "lucide-react";
+import { Settings2, LogOut, TrendingUp, Trophy, Dices, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
-import { Robux, RobuxIcon } from "@/components/Robux";
+import { Robux } from "@/components/Robux";
+import { UserAvatar } from "@/components/UserAvatar";
+import { LanguagePicker } from "@/components/layout/LanguagePicker";
+import { useI18n } from "@/lib/i18n";
+import markAsset from "@/assets/redhouse-mark.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+
 
 function CreatorPanel() {
   const { profile, refresh } = useProfile();
@@ -87,6 +92,7 @@ export function Header() {
   const { profile, signedIn } = useProfile();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useI18n();
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -95,12 +101,15 @@ export function Header() {
     navigate({ to: "/auth", replace: true });
   }
 
+  const navLink =
+    "rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground";
+
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-primary text-primary-foreground">
-            <RobuxIcon className="h-4 w-4" />
+          <span className="grid h-9 w-9 place-items-center rounded-md bg-foreground/95 p-1">
+            <img src={markAsset.url} alt="RedHouse logo" className="h-full w-full object-contain" />
           </span>
           <span className="font-display text-lg font-bold uppercase tracking-widest">
             Red<span className="text-primary">House</span>
@@ -110,62 +119,61 @@ export function Header() {
         <nav className="ml-4 hidden items-center gap-1 md:flex">
           <Link
             to="/"
-            className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            className={navLink}
             activeProps={{ className: "text-foreground bg-secondary" }}
             activeOptions={{ exact: true }}
           >
             <span className="inline-flex items-center gap-2">
-              <Dices className="h-4 w-4" /> Casino
+              <Dices className="h-4 w-4" /> {t("Casino")}
             </span>
           </Link>
-          <Link
-            to="/markets"
-            className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            activeProps={{ className: "text-foreground bg-secondary" }}
-          >
+          <Link to="/markets" className={navLink} activeProps={{ className: "text-foreground bg-secondary" }}>
             <span className="inline-flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" /> Markets
+              <TrendingUp className="h-4 w-4" /> {t("Markets")}
             </span>
           </Link>
-          <Link
-            to="/leaderboard"
-            className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            activeProps={{ className: "text-foreground bg-secondary" }}
-          >
+          <Link to="/leaderboard" className={navLink} activeProps={{ className: "text-foreground bg-secondary" }}>
             <span className="inline-flex items-center gap-2">
-              <Trophy className="h-4 w-4" /> Leaderboard
+              <Trophy className="h-4 w-4" /> {t("Leaderboard")}
             </span>
           </Link>
+          {signedIn && (
+            <Link to="/dashboard" className={navLink} activeProps={{ className: "text-foreground bg-secondary" }}>
+              <span className="inline-flex items-center gap-2">
+                <LayoutDashboard className="h-4 w-4" /> {t("Dashboard")}
+              </span>
+            </Link>
+          )}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <LanguagePicker />
           {signedIn && profile ? (
             <>
-              <div className="panel flex items-center gap-2 px-3 py-2">
+              <div className="panel hidden items-center gap-2 px-3 py-2 sm:flex">
                 <Robux amount={profile.balance} className="text-sm font-semibold" />
               </div>
               <CreatorPanel />
               <Link to="/wallet">
                 <Button variant="secondary" size="sm">
-                  Wallet
+                  {t("Wallet")}
                 </Button>
               </Link>
-              <img
-                src={profile.avatar_url ?? ""}
-                alt={`${profile.username} Roblox avatar`}
-                className="h-9 w-9 rounded-md border border-border bg-surface-2 object-cover"
-              />
-              <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out">
+              <Link to="/dashboard" aria-label={t("Dashboard")}>
+                <UserAvatar url={profile.avatar_url} username={profile.username} />
+              </Link>
+              <Button variant="ghost" size="icon" onClick={signOut} aria-label={t("Sign out")}>
                 <LogOut className="h-4 w-4" />
               </Button>
             </>
           ) : (
             <Link to="/auth">
-              <Button size="sm">Sign in with Roblox</Button>
+              <Button size="sm">{t("Sign in with Roblox")}</Button>
             </Link>
           )}
         </div>
       </div>
     </header>
   );
+
 }

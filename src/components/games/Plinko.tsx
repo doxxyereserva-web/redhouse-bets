@@ -32,8 +32,14 @@ export function Plinko() {
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   async function drop() {
-    if (!signedIn) return toast.error("Sign in with your Roblox account first.");
-    if (wager <= 0 || wager > balance) return toast.error("Invalid wager.");
+    if (!signedIn) {
+      toast.error("Sign in with your Roblox account first.");
+      return;
+    }
+    if (wager <= 0 || wager > balance) {
+      toast.error("Invalid wager.");
+      return;
+    }
     setDropping(true);
     setSlot(null);
 
