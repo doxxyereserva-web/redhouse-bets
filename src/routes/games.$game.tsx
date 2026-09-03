@@ -1,4 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useProfile } from "@/hooks/useProfile";
+import { Robux } from "@/components/Robux";
+import { GAME_ART } from "@/components/GameCarousel";
 import { getGame, GAMES } from "@/lib/games";
 import { Crash } from "@/components/games/Crash";
 import { Mines } from "@/components/games/Mines";
@@ -51,6 +54,7 @@ export const Route = createFileRoute("/games/$game")({
 
 function GamePage() {
   const { game } = Route.useLoaderData();
+  const { profile } = useProfile();
   const step = STEP_GAMES[game.id];
 
   return (
@@ -69,10 +73,31 @@ function GamePage() {
         ))}
       </div>
 
-      <header className="mb-6 mt-4">
-        <h1 className="font-display text-4xl font-bold uppercase">{game.name}</h1>
-        <p className="text-sm text-muted-foreground">{game.tagline}</p>
+      <header className="panel relative mb-6 mt-4 overflow-hidden">
+        <img
+          src={GAME_ART[game.id]}
+          alt={`${game.name} artwork`}
+          width={768}
+          height={512}
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface-1 via-surface-1/85 to-surface-1/30" />
+        <div className="relative flex flex-wrap items-end justify-between gap-4 p-5">
+          <div>
+            <h1 className="font-display text-4xl font-bold uppercase">{game.name}</h1>
+            <p className="text-sm text-muted-foreground">{game.tagline}</p>
+          </div>
+          {profile && (
+            <div className="panel bg-background/70 px-4 py-2">
+              <span className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Balance
+              </span>
+              <Robux amount={profile.balance} className="text-base font-bold" />
+            </div>
+          )}
+        </div>
       </header>
+
 
       {game.id === "crash" && <Crash />}
       {game.id === "mines" && <Mines />}
