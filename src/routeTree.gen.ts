@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as MarketsRouteImport } from './routes/markets'
+import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as GamesGameRouteImport } from './routes/games.$game'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +26,21 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketsRoute = MarketsRouteImport.update({
+  id: '/markets',
+  path: '/markets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GamesGameRoute = GamesGameRouteImport.update({
   id: '/games/$game',
   path: '/games/$game',
@@ -32,30 +50,50 @@ const GamesGameRoute = GamesGameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/markets': typeof MarketsRoute
+  '/wallet': typeof WalletRoute
   '/games/$game': typeof GamesGameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/markets': typeof MarketsRoute
+  '/wallet': typeof WalletRoute
   '/games/$game': typeof GamesGameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/markets': typeof MarketsRoute
+  '/wallet': typeof WalletRoute
   '/games/$game': typeof GamesGameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/games/$game'
+  fullPaths:
+    '/' | '/auth' | '/leaderboard' | '/markets' | '/wallet' | '/games/$game'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/games/$game'
-  id: '__root__' | '/' | '/auth' | '/games/$game'
+  to: '/' | '/auth' | '/leaderboard' | '/markets' | '/wallet' | '/games/$game'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/leaderboard'
+    | '/markets'
+    | '/wallet'
+    | '/games/$game'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  LeaderboardRoute: typeof LeaderboardRoute
+  MarketsRoute: typeof MarketsRoute
+  WalletRoute: typeof WalletRoute
   GamesGameRoute: typeof GamesGameRoute
 }
 
@@ -75,6 +113,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/markets': {
+      id: '/markets'
+      path: '/markets'
+      fullPath: '/markets'
+      preLoaderRoute: typeof MarketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/games/$game': {
       id: '/games/$game'
       path: '/games/$game'
@@ -88,6 +147,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  LeaderboardRoute: LeaderboardRoute,
+  MarketsRoute: MarketsRoute,
+  WalletRoute: WalletRoute,
   GamesGameRoute: GamesGameRoute,
 }
 export const routeTree = rootRouteImport
