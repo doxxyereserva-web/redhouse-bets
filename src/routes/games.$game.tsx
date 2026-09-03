@@ -1,4 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useProfile } from "@/hooks/useProfile";
+import { Robux } from "@/components/Robux";
+import { GAME_ART } from "@/components/GameCarousel";
 import { getGame, GAMES } from "@/lib/games";
 import { Crash } from "@/components/games/Crash";
 import { Mines } from "@/components/games/Mines";
@@ -51,6 +54,7 @@ export const Route = createFileRoute("/games/$game")({
 
 function GamePage() {
   const { game } = Route.useLoaderData();
+  const { profile } = useProfile();
   const step = STEP_GAMES[game.id];
 
   return (
