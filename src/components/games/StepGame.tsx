@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { BetControls } from "@/components/games/BetControls";
 import { useWallet } from "@/hooks/useWallet";
 import { formatMultiplier } from "@/lib/format";
+import { edged } from "@/lib/fair";
 
 export type StepConfig = {
   id: string;
@@ -61,8 +62,9 @@ export const STEP_GAMES: Record<string, StepConfig> = {
 };
 
 function multiplierAt(cfg: StepConfig, level: number) {
-  const per = cfg.choices / cfg.safe;
-  return Number((Math.pow(per, level) * 0.97).toFixed(2));
+  // Edge compounds per step, so long runs are not free money.
+  const per = (cfg.choices / cfg.safe) * (1 - 0.06);
+  return edged(Math.pow(per, level) / (1 - 0.06));
 }
 
 export function StepGame({ config }: { config: StepConfig }) {

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
+import { MAX_MULTIPLIER } from "@/lib/fair";
 
 export function useWallet() {
   const { profile, refresh, signedIn, session, ready } = useProfile();
@@ -22,7 +23,8 @@ export function useWallet() {
         toast.error("Sign in with your Roblox account first.");
         return null;
       }
-      const finalMultiplier = multiplier > 0 ? multiplier * boost : 0;
+      const finalMultiplier =
+        multiplier > 0 ? Math.min(multiplier * boost, MAX_MULTIPLIER) : 0;
       const payout = Number((wager * finalMultiplier).toFixed(2));
       const { data, error } = await supabase.rpc("apply_bet", {
         _game: game,
