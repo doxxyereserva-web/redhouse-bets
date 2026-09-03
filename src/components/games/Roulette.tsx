@@ -29,7 +29,8 @@ export function Roulette() {
   const [pick, setPick] = useState<Color>("red");
   const [spinning, setSpinning] = useState(false);
   const [landed, setLanded] = useState<Color | null>(null);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(WHEEL.length * 2 * TILE);
+  const [animate, setAnimate] = useState(false);
 
   const strip = Array.from({ length: WHEEL.length * REPEATS }, (_, i) => WHEEL[i % WHEEL.length]!);
 
@@ -45,20 +46,28 @@ export function Roulette() {
     setSpinning(true);
     setLanded(null);
 
+    // Reset the strip to a neutral start position without animating.
+    setAnimate(false);
+    setOffset(WHEEL.length * 2 * TILE);
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
+
     // A single fair wheel spin decides everything — no per-bet win rolls.
     const index = Math.floor(Math.random() * WHEEL.length);
     const result = WHEEL[index]!;
     const target = WHEEL.length * (REPEATS - 4) + index;
+    setAnimate(true);
     setOffset(target * TILE + (Math.random() * 20 - 10));
 
     await new Promise((r) => setTimeout(r, 4200));
     setLanded(result);
     setSpinning(false);
+    setAnimate(false);
     const m = result === pick ? payoutForChance(CHANCE[pick]) : 0;
     await settle("roulette", wager, m);
     if (m) toast.success(`${result.toUpperCase()} hit — ${formatMultiplier(m)}`);
     else toast.error(`${result.toUpperCase()} — you lost.`);
   }
+
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
