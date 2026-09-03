@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Settings2, LogOut, TrendingUp, Trophy, Dices } from "lucide-react";
+import { Settings2, LogOut, TrendingUp, Trophy, Dices, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
-import { Robux, RobuxIcon } from "@/components/Robux";
+import { Robux } from "@/components/Robux";
+import { UserAvatar } from "@/components/UserAvatar";
+import { LanguagePicker } from "@/components/layout/LanguagePicker";
+import { useI18n } from "@/lib/i18n";
+import markAsset from "@/assets/redhouse-mark.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+
 
 function CreatorPanel() {
   const { profile, refresh } = useProfile();
