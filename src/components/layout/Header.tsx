@@ -150,11 +150,11 @@ export function Header() {
           <LanguagePicker />
           {signedIn && profile ? (
             <>
-              <div className="panel hidden items-center gap-2 px-3 py-2 sm:flex">
-                <Robux amount={profile.balance} className="text-sm font-semibold" />
+              <div className="panel flex items-center gap-2 px-2 py-1.5 sm:px-3 sm:py-2">
+                <Robux amount={profile.balance} className="text-xs font-semibold sm:text-sm" />
               </div>
               <CreatorPanel />
-              <Link to="/wallet">
+              <Link to="/wallet" className="hidden sm:block">
                 <Button variant="secondary" size="sm">
                   {t("Wallet")}
                 </Button>
